@@ -33,7 +33,7 @@ async function generateCommitMessage(diff) {
     process.exit(1);
   }
 
-  const prompt = `Analyze the following git diff and generate a concise, clear commit message describing the changes.\n\nGit diff:\n${diff}`;
+  const prompt = `Analyze the following git diff and respond ONLY with a concise, clear, single-line commit message describing the changes. Do NOT include explanations, formatting, or extra text.\n\nGit diff:\n${diff}`;
 
   // Use global fetch if available (Node 18+), otherwise use node-fetch
   let fetchFn = global.fetch;
@@ -62,7 +62,10 @@ async function generateCommitMessage(diff) {
     throw new Error(`Claude API error: ${err}`);
   }
   const data = await response.json();
-  return data.content[0].text.trim();
+  // Use only the first non-empty line as the commit message
+  const raw = data.content[0].text.trim();
+  const firstLine = raw.split('\n').find(line => line.trim().length > 0) || raw;
+  return firstLine.trim();
 }
 
 program
