@@ -35,3 +35,4 @@ smart-committer
 
 ## License
 MIT
+
