@@ -10,6 +10,18 @@ const git = simpleGit();
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const CLAUDE_MODEL = 'claude-3-haiku-20240307'; // Use a public model
 
+/**
+ * Retrieves the difference source based on the specified type.
+ *
+ * @param {string} source - The source type of the diff. Can be 'staged', 'unstaged', or 'all'.
+ * @returns {Promise<string>} A Promise that resolves with the diff output as a string.
+ * @throws {Error} Throws an error if the source type is unknown.
+ *
+ * @example
+ * getDiffSource('staged').then(diff => {
+ *   console.log('Staged changes:', diff);
+ * });
+ */
 async function getDiffSource(source) {
   try {
     if (source === 'staged') {
