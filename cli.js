@@ -26,6 +26,19 @@ async function getStagedDiff() {
   }
 }
 
+/**
+ * Generates a concise commit message from a git diff using an AI API.
+ *
+ * @async
+ * @param {string} diff - The git diff to be analyzed.
+ * @returns {Promise<string>} A promise that resolves with the generated commit message.
+ * @throws {Error} If the CLAUDE_API_KEY is not set in the environment or if there's an error from the Claude API.
+ *
+ * @example
+ * generateCommitMessage("diff --git a/file.txt b/file.txt\nnew file mode 100644").then(message => {
+ *   console.log(message); // Example commit message: "Add new file.txt"
+ * });
+ */
 async function generateCommitMessage(diff) {
   const apiKey = process.env.CLAUDE_API_KEY;
   if (!apiKey) {
