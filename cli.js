@@ -15,15 +15,16 @@ async function getDiffSource(source) {
     if (source === 'staged') {
       // Staged changes
       return await git.diff(['--cached']);
-    } else if (source === 'unstaged') {
+    }
+    if (source === 'unstaged') {
       // Unstaged (working tree) changes
       return await git.diff();
-    } else if (source === 'all') {
+    }
+    if (source === 'all') {
       // All changes (HEAD vs working tree)
       return await git.diff(['HEAD']);
-    } else {
-      throw new Error('Unknown diff source. Use staged, unstaged, or all.');
     }
+    throw new Error('Unknown diff source. Use staged, unstaged, or all.');
   } catch (err) {
     console.error('Could not get git diff for requested source.');
     process.exit(1);
