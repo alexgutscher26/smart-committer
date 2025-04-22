@@ -26,6 +26,24 @@ async function getStagedDiff() {
   }
 }
 
+/**
+ * Generates a concise commit message from a git diff using Claude API.
+ *
+ * @param {string} diff - The git diff content to analyze.
+ * @param {string} [customPrompt] - A custom prompt for the Claude API. If not provided, a default prompt is used.
+ * @returns {Promise<string>} - A Promise that resolves with the generated commit message.
+ * @throws {Error} - Throws an error if the CLAUDE_API_KEY environment variable is not set.
+ * @throws {Error} - Throws an error if the Claude API returns a non-OK response.
+ *
+ * @example
+ * generateCommitMessage("diff --git a/file.js b/file.js\nindex 1234567..89abcde 100644\n--- a/file.js\n+++ b/file.js\n@@ -1,1 +1,2 @@\n console.log('Hello');\n+console.log('World')", "Custom prompt if needed")
+ *   .then(message => {
+ *     console.log("Commit message:", message);
+ *   })
+ *   .catch(error => {
+ *     console.error("Error generating commit message:", error.message);
+ *   });
+ */
 async function generateCommitMessage(diff, customPrompt) {
   const apiKey = process.env.CLAUDE_API_KEY;
   if (!apiKey) {
