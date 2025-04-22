@@ -33,6 +33,16 @@ git add .
 smart-committer
 ```
 
+## Git Hook Integration
+
+You can install a `prepare-commit-msg` hook to automatically generate a commit message suggestion before each commit:
+
+```
+node install-hook.js
+```
+
+This will create a `.git/hooks/prepare-commit-msg` script that runs smart-committer. You can customize the style/language in `install-hook.js`.
+
 ## License
 MIT
 

@@ -72,6 +72,7 @@ program
   .name('smart-committer')
   .description('AI-assisted commit message generator (powered by Claude)')
   .option('--style <style>', 'Commit message style: plain, conventional, semantic, summary-body', 'plain')
+  .option('--lang <lang>', 'Language for the commit message (e.g., en, es, fr, de, zh)', 'en')
   .option('--type <type>', 'Commit type for conventional style (feat, fix, chore, etc.)')
   .option('--commit', 'Directly create a git commit with the generated message')
   .action(async (opts) => {
@@ -85,14 +86,15 @@ program
       const style = opts.style || 'plain';
       let promptStyle = '';
       const type = opts.type || 'feat';
+      const lang = opts.lang || 'en';
       if (style === 'conventional') {
-        promptStyle = `Respond ONLY with a Conventional Commit message (type: ${type}), no explanation or formatting.`;
+        promptStyle = `Respond ONLY with a Conventional Commit message (type: ${type}), no explanation or formatting. Write the message in ${lang}.`;
       } else if (style === 'semantic') {
-        promptStyle = 'Respond ONLY with a clear, multi-line, semantic commit message (summary + body), no explanation or formatting.';
+        promptStyle = `Respond ONLY with a clear, multi-line, semantic commit message (summary + body), no explanation or formatting. Write the message in ${lang}.`;
       } else if (style === 'summary-body') {
-        promptStyle = 'Respond ONLY with a commit message in the following format:\n<one-line summary>\n\n<detailed body>. Do NOT include explanations, formatting, or extra text.';
+        promptStyle = `Respond ONLY with a commit message in the following format:\n<one-line summary>\n\n<detailed body>. Do NOT include explanations, formatting, or extra text. Write the message in ${lang}.`;
       } else {
-        promptStyle = 'Respond ONLY with a concise, clear, single-line commit message, no explanation or formatting.';
+        promptStyle = `Respond ONLY with a concise, clear, single-line commit message, no explanation or formatting. Write the message in ${lang}.`;
       }
       // Compose prompt for Claude
       const prompt = `${promptStyle}\n\nGit diff:\n${diff}`;
