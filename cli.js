@@ -71,7 +71,7 @@ async function generateCommitMessage(diff, customPrompt) {
 program
   .name('smart-committer')
   .description('AI-assisted commit message generator (powered by Claude)')
-  .option('--style <style>', 'Commit message style: plain, conventional, semantic', 'plain')
+  .option('--style <style>', 'Commit message style: plain, conventional, semantic, summary-body', 'plain')
   .option('--type <type>', 'Commit type for conventional style (feat, fix, chore, etc.)')
   .option('--commit', 'Directly create a git commit with the generated message')
   .action(async (opts) => {
@@ -89,6 +89,8 @@ program
         promptStyle = `Respond ONLY with a Conventional Commit message (type: ${type}), no explanation or formatting.`;
       } else if (style === 'semantic') {
         promptStyle = 'Respond ONLY with a clear, multi-line, semantic commit message (summary + body), no explanation or formatting.';
+      } else if (style === 'summary-body') {
+        promptStyle = 'Respond ONLY with a commit message in the following format:\n<one-line summary>\n\n<detailed body>. Do NOT include explanations, formatting, or extra text.';
       } else {
         promptStyle = 'Respond ONLY with a concise, clear, single-line commit message, no explanation or formatting.';
       }
@@ -98,6 +100,11 @@ program
       // Post-process for conventional style
       if (style === 'conventional') {
         message = `${type}: ${message}`;
+      } else if (style === 'summary-body') {
+        // Only keep up to two paragraphs (summary and body)
+        const [summary, ...rest] = message.split(/\r?\n\r?\n/);
+        const body = rest.join('\n\n').trim();
+        message = summary.trim() + (body ? `\n\n${body}` : '');
       }
       console.log('\nSuggested commit message:\n');
       console.log(message);
