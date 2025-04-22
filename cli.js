@@ -2,6 +2,7 @@
 require('dotenv').config();
 const { Command } = require('commander');
 const simpleGit = require('simple-git');
+const inquirer = require('inquirer');
 
 const program = new Command();
 const git = simpleGit();
@@ -88,11 +89,28 @@ program
       console.log(message);
 
       if (opts.commit) {
-        // Directly commit with the generated message
+        // Interactive edit/approve step
+        const { approvedMessage, doCommit } = await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'approvedMessage',
+            message: 'Edit commit message (or press Enter to accept):',
+            default: message,
+          },
+          {
+            type: 'confirm',
+            name: 'doCommit',
+            message: 'Commit with this message?',
+            default: true,
+          }
+        ]);
+        if (!doCommit) {
+          console.log('Aborted commit.');
+          process.exit(0);
+        }
         try {
-          const commitResult = await git.commit(message);
+          const commitResult = await git.commit(approvedMessage);
           console.log('\nCommitted with message above.');
-          // Optionally show commit hash/summary
           if (commitResult.commit) {
             console.log(`Commit hash: ${commitResult.commit}`);
           }
