@@ -2,7 +2,6 @@
 require('dotenv').config();
 const { Command } = require('commander');
 const simpleGit = require('simple-git');
-const fetch = require('node-fetch');
 
 const program = new Command();
 const git = simpleGit();
@@ -36,7 +35,13 @@ async function generateCommitMessage(diff) {
 
   const prompt = `Analyze the following git diff and generate a concise, clear commit message describing the changes.\n\nGit diff:\n${diff}`;
 
-  const response = await fetch(CLAUDE_API_URL, {
+  // Use global fetch if available (Node 18+), otherwise use node-fetch
+  let fetchFn = global.fetch;
+  if (!fetchFn) {
+    fetchFn = (await import('node-fetch')).default;
+  }
+
+  const response = await fetchFn(CLAUDE_API_URL, {
     method: 'POST',
     headers: {
       'x-api-key': apiKey,
@@ -64,6 +69,7 @@ program
   .name('smart-committer')
   .description('AI-assisted commit message generator (powered by Claude)')
   .option('-c, --conventional', 'Format message as a conventional commit')
+  .option('--commit', 'Directly create a git commit with the generated message')
   .action(async (opts) => {
     try {
       const diff = await getStagedDiff();
@@ -77,6 +83,21 @@ program
       }
       console.log('\nSuggested commit message:\n');
       console.log(message);
+
+      if (opts.commit) {
+        // Directly commit with the generated message
+        try {
+          const commitResult = await git.commit(message);
+          console.log('\nCommitted with message above.');
+          // Optionally show commit hash/summary
+          if (commitResult.commit) {
+            console.log(`Commit hash: ${commitResult.commit}`);
+          }
+        } catch (commitErr) {
+          console.error('Failed to create commit:', commitErr.message);
+          process.exit(1);
+        }
+      }
     } catch (err) {
       console.error('Failed to generate commit message:', err.message);
       process.exit(1);
