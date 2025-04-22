@@ -10,19 +10,23 @@ const git = simpleGit();
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const CLAUDE_MODEL = 'claude-3-haiku-20240307'; // Use a public model
 
-async function getStagedDiff() {
-  // Try to get staged diff with '--cached', fallback to 'HEAD' if error
+async function getDiffSource(source) {
   try {
-    // Most environments: staged changes
-    return await git.diff(['--cached']);
-  } catch (err) {
-    try {
-      // Fallback: diff against HEAD (includes staged changes)
+    if (source === 'staged') {
+      // Staged changes
+      return await git.diff(['--cached']);
+    } else if (source === 'unstaged') {
+      // Unstaged (working tree) changes
+      return await git.diff();
+    } else if (source === 'all') {
+      // All changes (HEAD vs working tree)
       return await git.diff(['HEAD']);
-    } catch (err2) {
-      console.error('Could not get git diff for staged changes.');
-      process.exit(1);
+    } else {
+      throw new Error('Unknown diff source. Use staged, unstaged, or all.');
     }
+  } catch (err) {
+    console.error('Could not get git diff for requested source.');
+    process.exit(1);
   }
 }
 
@@ -71,15 +75,17 @@ async function generateCommitMessage(diff, customPrompt) {
 program
   .name('smart-committer')
   .description('AI-assisted commit message generator (powered by Claude)')
+  .option('--diff <source>', 'Diff source: staged, unstaged, all', 'staged')
   .option('--style <style>', 'Commit message style: plain, conventional, semantic, summary-body', 'plain')
   .option('--lang <lang>', 'Language for the commit message (e.g., en, es, fr, de, zh)', 'en')
   .option('--type <type>', 'Commit type for conventional style (feat, fix, chore, etc.)')
   .option('--commit', 'Directly create a git commit with the generated message')
   .action(async (opts) => {
     try {
-      const diff = await getStagedDiff();
+      const diffSource = opts.diff || 'staged';
+      const diff = await getDiffSource(diffSource);
       if (!diff.trim()) {
-        console.log('No staged changes found.');
+        console.log(`No ${diffSource} changes found.`);
         process.exit(0);
       }
       // Determine prompt and formatting based on style

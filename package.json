@@ -8,12 +8,20 @@
   },
   "author": "",
   "license": "MIT",
-  "keywords": ["git", "commit", "ai", "claude", "cli"],
+  "keywords": [
+    "git",
+    "commit",
+    "ai",
+    "claude",
+    "cli"
+  ],
   "dependencies": {
     "commander": "^11.1.0",
-    "simple-git": "^3.22.0",
     "dotenv": "^16.4.5",
+    "fs": "0.0.1-security",
+    "inquirer": "^9.2.16",
     "node-fetch": "^3.3.2",
-    "inquirer": "^9.2.16"
+    "path": "^0.12.7",
+    "simple-git": "^3.22.0"
   }
 }
