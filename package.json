@@ -1,6 +1,6 @@
 {
   "name": "smart-committer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "AI-assisted commit message generator that analyzes your code diffs (powered by Claude)",
   "main": "cli.js",
   "bin": {
