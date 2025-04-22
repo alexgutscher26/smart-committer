@@ -2,7 +2,6 @@
 require('dotenv').config();
 const { Command } = require('commander');
 const simpleGit = require('simple-git');
-const inquirer = require('inquirer');
 
 const program = new Command();
 const git = simpleGit();
@@ -27,14 +26,14 @@ async function getStagedDiff() {
   }
 }
 
-async function generateCommitMessage(diff) {
+async function generateCommitMessage(diff, customPrompt) {
   const apiKey = process.env.CLAUDE_API_KEY;
   if (!apiKey) {
     console.error('Error: CLAUDE_API_KEY not set in environment.');
     process.exit(1);
   }
 
-  const prompt = `Analyze the following git diff and respond ONLY with a concise, clear, single-line commit message describing the changes. Do NOT include explanations, formatting, or extra text.\n\nGit diff:\n${diff}`;
+  const prompt = customPrompt || `Analyze the following git diff and respond ONLY with a concise, clear, single-line commit message describing the changes. Do NOT include explanations, formatting, or extra text.\n\nGit diff:\n${diff}`;
 
   // Use global fetch if available (Node 18+), otherwise use node-fetch
   let fetchFn = global.fetch;
@@ -72,7 +71,8 @@ async function generateCommitMessage(diff) {
 program
   .name('smart-committer')
   .description('AI-assisted commit message generator (powered by Claude)')
-  .option('-c, --conventional', 'Format message as a conventional commit')
+  .option('--style <style>', 'Commit message style: plain, conventional, semantic', 'plain')
+  .option('--type <type>', 'Commit type for conventional style (feat, fix, chore, etc.)')
   .option('--commit', 'Directly create a git commit with the generated message')
   .action(async (opts) => {
     try {
@@ -81,15 +81,31 @@ program
         console.log('No staged changes found.');
         process.exit(0);
       }
-      let message = await generateCommitMessage(diff);
-      if (opts.conventional) {
-        message = `feat: ${message}`; // Simple prefix, can be improved
+      // Determine prompt and formatting based on style
+      const style = opts.style || 'plain';
+      let promptStyle = '';
+      const type = opts.type || 'feat';
+      if (style === 'conventional') {
+        promptStyle = `Respond ONLY with a Conventional Commit message (type: ${type}), no explanation or formatting.`;
+      } else if (style === 'semantic') {
+        promptStyle = 'Respond ONLY with a clear, multi-line, semantic commit message (summary + body), no explanation or formatting.';
+      } else {
+        promptStyle = 'Respond ONLY with a concise, clear, single-line commit message, no explanation or formatting.';
+      }
+      // Compose prompt for Claude
+      const prompt = `${promptStyle}\n\nGit diff:\n${diff}`;
+      let message = await generateCommitMessage(diff, prompt);
+      // Post-process for conventional style
+      if (style === 'conventional') {
+        message = `${type}: ${message}`;
       }
       console.log('\nSuggested commit message:\n');
       console.log(message);
 
       if (opts.commit) {
         // Interactive edit/approve step
+        // Dynamically import inquirer for ESM compatibility
+        const inquirer = (await import('inquirer')).default;
         const { approvedMessage, doCommit } = await inquirer.prompt([
           {
             type: 'input',
