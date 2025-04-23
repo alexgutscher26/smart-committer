@@ -1,0 +1,9 @@
+{
+  "model": "claude-3-haiku-20240307",
+  "style": "plain",
+  "lang": "en",
+  "diff": "staged",
+  "type": "feat",
+  "extraPrompt": "",
+  "batch": false
+}
