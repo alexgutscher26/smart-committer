@@ -33,6 +33,25 @@ async function getDiffSource(source) {
   }
 }
 
+/**
+ * Generates a concise commit message based on the provided git diff using the Claude API.
+ *
+ * @async
+ * @function
+ * @param {string} diff - The git diff to analyze.
+ * @param {string} customPrompt - (Optional) A custom prompt to use instead of the default one. Defaults to a general prompt for generating commit messages.
+ * @param {string} model - (Optional) The Claude API model to use for generating the commit message. Defaults to 'claude-3-haiku-20240307'.
+ * @returns {Promise<string>} A promise that resolves with the generated commit message.
+ *
+ * @throws {Error} Throws an error if the CLAUDE_API_KEY environment variable is not set.
+ * @throws {Error} Throws a network error if there's an issue contacting the Claude API.
+ * @throws {Error} Throws an error if the Claude API returns an unexpected response.
+ *
+ * @example
+ * generateCommitMessage('diff --git a/file.txt b/file.txt\nnew file mode 100644').then(message => {
+ *   console.log(message); // Example commit message: 'Add new file'
+ * });
+ */
 async function generateCommitMessage(diff, customPrompt, model = 'claude-3-haiku-20240307') {
   const apiKey = process.env.CLAUDE_API_KEY;
   if (!apiKey) {
