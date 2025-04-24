@@ -12,6 +12,27 @@ const git = simpleGit();
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 // Model is now selected via CLI/config, not hardcoded
 
+/**
+ * Retrieves the git diff based on the specified source.
+ *
+ * @async
+ * @function getDiffSource
+ * @param {string} source - The source of changes to retrieve. Can be 'staged', 'unstaged', or 'all'.
+ * @returns {Promise<string>} A Promise that resolves with the git diff string for the specified source.
+ * @throws {Error} Throws an error if the provided source is invalid ('unknown diff source. Use staged, unstaged, or all.').
+ *
+ * @example
+ * // Retrieve staged changes
+ * getDiffSource('staged')
+ *   .then(diff => console.log(diff))
+ *   .catch(err => console.error(err));
+ *
+ * @example
+ * // Retrieve all changes (HEAD vs working tree)
+ * getDiffSource('all')
+ *   .then(diff => console.log(diff))
+ *   .catch(err => console.error(err));
+ */
 async function getDiffSource(source) {
   try {
     if (source === 'staged') {
@@ -33,6 +54,20 @@ async function getDiffSource(source) {
   }
 }
 
+/**
+ * Generates a concise commit message based on a provided git diff.
+ *
+ * @async
+ * @function generateCommitMessage
+ * @param {string} diff - The git diff to analyze.
+ * @param {string} [customPrompt] - An optional custom prompt for Claude API. If not provided, a default prompt is used.
+ * @param {string} [model='claude-3-haiku-20240307'] - The Claude model to use for generating the commit message.
+ * @returns {Promise<string>} - A promise that resolves with the generated commit message.
+ *
+ * @throws {Error} If the CLAUDE_API_KEY environment variable is not set.
+ * @throws {Error} If a network error occurs when contacting the Claude API.
+ * @throws {Error} If the response from the Claude API is unexpected or invalid.
+ */
 async function generateCommitMessage(diff, customPrompt, model = 'claude-3-haiku-20240307') {
   const apiKey = process.env.CLAUDE_API_KEY;
   if (!apiKey) {
