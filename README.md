@@ -1,11 +1,22 @@
 # smart-committer
 
-AI-assisted commit message generator that analyzes your code diffs using Claude (Anthropic).
+AI-assisted commit message generator that analyzes your code diffs using multiple AI models (Claude and OpenAI).
 
 ## Features
-- CLI tool to generate commit messages based on staged git diffs
-- Uses Claude (Anthropic) for concise, relevant messages
-- Optional support for conventional commit format
+- Generate commit messages using Claude or OpenAI
+- Multiple commit message styles:
+  - Plain: Simple, descriptive messages
+  - Conventional: Follows conventional commit format (feat:, fix:, docs:, etc.)
+  - Emoji: Includes relevant emojis at the start
+- Multiple diff sources:
+  - Staged: Only staged changes
+  - Unstaged: Only unstaged changes
+  - All: All changes since last commit
+- Batch mode for generating messages for multiple commits
+- Custom prompt templates
+- Configurable via CLI options or config file
+- Progress indicators and color-coded output
+- Error handling and validation
 
 ## Installation
 ```
@@ -18,19 +29,75 @@ smart-committer [options]
 ```
 
 Options:
-- `-c, --conventional`  Format message as a conventional commit
+- `--model <model>`  AI model to use (claude or openai)
+- `--style <style>`  Commit message style (plain, conventional, emoji)
+- `--lang <lang>`    Language for commit message
+- `--diff <source>`  Diff source (staged, unstaged, all)
+- `--batch`          Batch mode for multiple commits
+- `--prompt <prompt>` Custom prompt template
+- `--config <path>`  Path to config file
 
 ## Setup
-1. Get your Claude API key from Anthropic.
-2. Create a `.env` file in your project or home directory:
+1. Install dependencies:
    ```
-   CLAUDE_API_KEY=your_claude_api_key_here
+   npm install
    ```
 
-## Example
-```
-git add .
-smart-committer
+2. Set up your API keys:
+   - For Claude: `CLAUDE_API_KEY=your_claude_api_key_here`
+   - For OpenAI: `OPENAI_API_KEY=your_openai_api_key_here`
+
+   Create a `.env` file in your project root or home directory:
+   ```
+   CLAUDE_API_KEY=your_claude_api_key_here
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
+
+## Examples
+
+1. Basic usage:
+   ```
+   git add .
+   smart-committer
+   ```
+
+2. Using conventional commit format:
+   ```
+   smart-committer --style conventional
+   ```
+
+3. Using OpenAI model:
+   ```
+   smart-committer --model openai
+   ```
+
+4. Batch mode for multiple commits:
+   ```
+   smart-committer --batch
+   ```
+
+5. Using a custom prompt:
+   ```
+   smart-committer --prompt "Analyze the code changes and suggest a commit message that follows our project's conventions."
+   ```
+
+6. Using a config file:
+   ```
+   smart-committer --config ./commit-config.json
+   ```
+
+## Configuration
+
+Create a `smart-committer.config.json` file with your preferred settings:
+```json
+{
+  "model": "claude",
+  "style": "conventional",
+  "lang": "en",
+  "diff": "staged",
+  "batch": false,
+  "customPrompt": "Analyze the code changes and suggest a commit message that follows our project's conventions."
+}
 ```
 
 ## Smart Committer
