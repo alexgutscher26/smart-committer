@@ -3,23 +3,30 @@
 AI-assisted commit message generator that analyzes your code diffs using multiple AI models (Claude and OpenAI).
 
 ## Features
-- Generate commit messages using Claude or OpenAI
-- Multiple commit message styles:
-  - Plain: Simple, descriptive messages
-  - Conventional: Follows conventional commit format (feat:, fix:, docs:, etc.)
-  - Emoji: Includes relevant emojis at the start
+- Multiple AI models:
+  - Claude (default): Anthropic's Claude 3 models (haiku, sonnet, opus)
+  - OpenAI: GPT-4 and GPT-3.5 models
 - Multiple diff sources:
   - Staged: Only staged changes
   - Unstaged: Only unstaged changes
   - All: All changes since last commit
+- Multiple commit message styles:
+  - Plain: Simple, direct messages
+  - Conventional: Follows conventional commit format
+  - Emoji: Includes relevant emoji
+  - Gitmoji: Uses gitmoji format
+- Multiple languages support
 - Batch mode for generating messages for multiple commits
 - Custom prompt templates
 - Configurable via CLI options or config file
 - Progress indicators and color-coded output
 - Error handling and validation
+- Large diff size handling with warnings
+- Dry run mode for testing
+- Configurable max diff size
 
 ## Installation
-```
+```bash
 npm install -g smart-committer
 ```
 
@@ -28,12 +35,20 @@ npm install -g smart-committer
 smart-committer [options]
 ```
 
-Options:
-- `--model <model>`  AI model to use (claude or openai)
-- `--style <style>`  Commit message style (plain, conventional, emoji)
-- `--lang <lang>`    Language for commit message
-- `--diff <source>`  Diff source (staged, unstaged, all)
-- `--batch`          Batch mode for multiple commits
+## Options
+```
+--model <model>              AI model to use (claude, openai) [default: claude]
+--model-version <version>    Specific model version (haiku, sonnet, opus for Claude; 4, 4-turbo, 3.5-turbo for OpenAI)
+--diff <source>             Diff source: staged, unstaged, all [default: staged]
+--style <style>             Commit message style: plain, conventional, emoji, gitmoji [default: plain]
+--lang <lang>               Language for commit message [default: en]
+--batch                     Batch mode for analyzing multiple commits
+--prompt <prompt>          Custom prompt template
+--config <path>            Path to config file [default: .smartcommitter.json]
+--apply                    Apply the generated message and commit changes
+--dry-run                 Show what would be done without actually committing
+--max-diff-size <size>    Maximum diff size in characters [default: 10000]
+```
 - `--prompt <prompt>` Custom prompt template
 - `--config <path>`  Path to config file
 
