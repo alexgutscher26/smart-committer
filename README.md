@@ -257,6 +257,7 @@ smart-committer --analyze
 Improved Git hook functionality with auto-stage and fallback message options.
 
 Install hooks with:
+
 ```sh
 node install-hook.js
 ```
@@ -352,6 +353,7 @@ Create custom commit templates in the `./commit-templates` directory. Templates 
 - `{{detectedScope}}` - Automatically detected scope
 
 Example template (`commit-templates/conventional.txt`):
+
 ```
 Generate a conventional commit message for the following code changes.
 
@@ -389,6 +391,7 @@ node install-hook.js
 This creates `.git/hooks/prepare-commit-msg` that runs smart-committer. Edit `install-hook.js` to customize style/language.
 
 Enhanced hook features:
+
 - Auto-stage files before generating messages
 - Fallback commit messages if generation fails
 - Configurable through the `hooks` section in your config file
@@ -404,6 +407,7 @@ smart-committer --analyze
 ```
 
 This provides insights on:
+
 - Commit types and frequencies
 - Common scopes
 - Message length statistics
