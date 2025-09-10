@@ -632,7 +632,8 @@ class GitUtils {
 
   async commitWithMessage(message: string): Promise<string> {
     try {
-      const result = await this.execAsync(`git commit -m "${message.replace(/"/g, '\\"')}"`);
+      const escapedMessage = message.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const result = await this.execAsync(`git commit -m "${escapedMessage}"`);
       return result.stdout;
     } catch (error) {
       throw new Error(`Commit error: ${error instanceof Error ? error.message : String(error)}`);

@@ -1,6 +1,9 @@
 # This workflow will improvise current file with AI genereated documentation and Create new PR
 
 name: Penify - Revolutionizing Documentation on GitHub
+permissions:
+  contents: read
+  pull-requests: write
 
 on:
   push:
