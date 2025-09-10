@@ -1,0 +1,24 @@
+Generate a conventional commit message for the following code changes.
+
+{{#if detectedScope}}Use the scope "{{detectedScope}}" if appropriate.{{/if}}
+{{#if scope}}Use the specified scope "{{scope}}" if appropriate.{{/if}}
+
+Git diff:
+{{diff}}
+
+Format the commit message as: <type>(<scope>): <description>
+
+Where <type> is one of: feat, fix, docs, style, refactor, perf, test, build, ci, chore
+Where <scope> is the affected component or module (optional)
+Where <description> is a brief description of the change
+
+Examples:
+feat(api): add new endpoint for user authentication
+fix(ui): resolve button alignment issue
+docs(readme): update installation instructions
+
+Important guidelines:
+1. Ensure the message is under 72 characters for the first line.
+2. Use present tense.
+3. Focus on WHY the change was made, not just what was changed.
+4. Return ONLY the commit message without any additional formatting or explanation.

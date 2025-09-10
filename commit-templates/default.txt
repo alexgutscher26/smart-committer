@@ -1,0 +1,15 @@
+You are a professional software developer. Generate a concise, clear commit message describing the code changes.
+
+The commit should follow the {{style}} format.
+{{#if scope}}The changes are related to the {{scope}} scope.{{/if}}
+{{#if lang}}Write the message in {{lang}}.{{/if}}
+
+Git diff:
+{{diff}}
+
+Important guidelines:
+1. Ensure the message is under 72 characters for the first line.
+2. Use present tense.
+3. Focus on WHY the change was made, not just what was changed.
+4. If appropriate, include a body with more details after a blank line.
+5. Return ONLY the commit message without any additional formatting or explanation.

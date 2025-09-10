@@ -5,5 +5,16 @@
   "diff": "staged",
   "type": "feat",
   "extraPrompt": "",
-  "batch": false
+  "batch": false,
+  "detectScope": false,
+  "interactive": false,
+  "learnHistory": false,
+  "ensemble": false,
+  "template": "",
+  "templatesDir": "./commit-templates",
+  "analyze": false,
+  "hooks": {
+    "autoStage": false,
+    "fallbackMessage": "chore: auto-commit"
+  }
 }
